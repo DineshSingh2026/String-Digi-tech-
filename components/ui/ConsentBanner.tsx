@@ -24,6 +24,7 @@ export default function ConsentBanner() {
     <div
       role="region"
       aria-label={interactive.consentBanner.ariaLabel}
+      data-consent-banner=""
       style={{ position: "fixed" }}
       className="panel fixed inset-x-3 bottom-3 z-50 p-5 sm:inset-x-auto sm:left-5 sm:bottom-5 sm:w-[400px]"
     >

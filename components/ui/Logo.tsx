@@ -22,7 +22,7 @@ export default function Logo({ variant = "full", height = 36, priority = false, 
       alt={company.wordmark}
       width={width}
       height={height}
-      priority={priority}
+      preload={priority}
       unoptimized
       className={`block select-none ${className}`}
       style={{ width, height }}

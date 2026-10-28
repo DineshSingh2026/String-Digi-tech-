@@ -657,3 +657,86 @@ export const pipelineUi = {
   reviewer: "Human reviewer",
   diagram: "Strategy lifecycle diagram: work flows from Research to Monitoring, held at two human review gates, with a refine loop back to Research.",
 } as const;
+
+/** v2 inner-page labels and image alt text. Plain labels only, no claims. */
+export const v2Pages = {
+  breadcrumbHome: "Home",
+  breadcrumbAria: "Breadcrumb",
+  solutionsLabel: "Solutions",
+  related: { eyebrow: "Solutions", heading: "Explore other solutions", link: "Learn more" },
+  cta: { eyebrow: "Next step" },
+  solution: { overviewTitle: "What we deliver", oversightEyebrow: "Human oversight", standardEyebrow: "Our standard" },
+  fintech: { eyebrow: "Financial technology", supportsTitle: "What our technology supports" },
+  approach: {
+    eyebrow: "Our approach",
+    pillarsEyebrow: "How AI fits in",
+    pillarsTitle: "AI, applied where it creates value.",
+    principlesTitle: "The principles behind every engagement.",
+    pipelineEyebrow: "Strategy lifecycle",
+    reviewBadge: "Review",
+    refineNote: "Monitoring feeds back into research to refine each strategy.",
+  },
+  about: {
+    eyebrow: "About us",
+    missionEyebrow: "Mission",
+    officeEyebrow: "Singapore",
+    legalName: "Legal name",
+    uen: "UEN",
+    address: "Address",
+  },
+  contact: { eyebrow: "Contact", formTitle: "Send an enquiry", required: "Required", detailsTitle: "Contact details" },
+  legal: { eyebrow: "Legal", navTitle: "Legal documents" },
+  alt: {
+    "algorithmic-trading": "Candlestick price chart on a trading screen",
+    "data-analytics": "Analytics charts on a laptop screen",
+    infrastructure: "Corridor of server racks in a data centre",
+    software: "Team meeting around a table with laptops",
+    fintech: "Glass office towers seen from below",
+    approach: "Hands and notebooks around a meeting table",
+    about: "Bright open-plan office",
+    office: "Marina Bay, Singapore, by day",
+    contact: "Marina Bay Sands, Singapore, at night",
+  },
+};
+
+/** v2 homepage and chrome labels. Short UI words and image alt text only; all claims come from `home`. */
+export const v2Ui = {
+  learnMore: "Learn more",
+  eyebrows: {
+    services: "What we do",
+    riskFirst: "Risk management",
+    pipeline: "Strategy lifecycle",
+    analytics: "Data analytics",
+    infrastructure: "Infrastructure",
+    software: "Software",
+    principles: "Principles",
+    why: "Why us",
+    singapore: "Singapore",
+    closing: "Get in touch",
+  },
+  pipelineLoopNote: "Monitoring feeds back into research to refine each strategy.",
+  registeredOffice: "Registered office",
+  footerCols: { solutions: "Solutions", company: "Company", legal: "Legal" },
+  alt: {
+    hero: "Aerial view of Marina Bay, Singapore, at dusk",
+    services: [
+      "Candlestick price chart on a dark trading screen",
+      "Analytics charts on a laptop screen",
+      "Corridor of server racks in a data centre",
+      "Team meeting around a table with laptops",
+    ],
+    riskFirst: "Glass office towers seen from below",
+    analytics: "Analytics charts on a laptop screen",
+    infrastructure: "Corridor of server racks in a data centre",
+    software: "Bright open-plan office",
+    why: "Colleagues taking notes around a meeting table",
+    singapore: "Marina Bay Sands and the Singapore waterfront by day",
+    closing: "Singapore skyline at sunset",
+  },
+} as const;
+
+export const versionSwitch = {
+  label: "Design",
+  classic: "Classic",
+  clean: "Clean",
+};
