@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { home, nav, pagesUi, solutions, type SolutionSlug } from "@/content/copy";
-import PageHero from "@/components/sections/PageHero";
-import Section from "@/components/sections/Section";
-import Closing from "@/components/sections/Closing";
-import Reveal from "@/components/ui/Reveal";
-import Button from "@/components/ui/Button";
-import DisclaimerBlock from "@/components/ui/DisclaimerBlock";
+import { nav, solutions, v2Pages, type SolutionSlug } from "@/content/copy";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import RiskLimitSlider from "@/components/interactive/RiskLimitSlider";
-import AnalyticsDashboard from "@/components/interactive/AnalyticsDashboard";
-import MonitoringPanel from "@/components/interactive/MonitoringPanel";
-import { SpecGroups, SpecSheet } from "@/components/pages/SolutionParts";
+import DisclaimerBlock from "@/components/ui/DisclaimerBlock";
+import Eyebrow from "@/components/ui/Eyebrow";
+import SectionHeading from "@/components/ui/SectionHeading";
+import PageHero from "@/components/v2/PageHero";
+import CtaBand from "@/components/v2/CtaBand";
+import { ArrowRight, CheckBadge } from "@/components/v2/icons";
 
 export const dynamicParams = false;
 
@@ -21,129 +19,158 @@ export function generateStaticParams() {
 
 type Params = { params: Promise<{ slug: string }> };
 
-function get(slug: string) {
-  return slug in solutions ? solutions[slug as SolutionSlug] : null;
+const PHOTOS: Record<SolutionSlug, string> = {
+  "algorithmic-trading": "/images/trading-chart.jpg",
+  "data-analytics": "/images/analytics-dashboard.jpg",
+  infrastructure: "/images/data-centre.jpg",
+  software: "/images/team-laptops.jpg",
+};
+
+function isSlug(slug: string): slug is SolutionSlug {
+  return slug in solutions;
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const s = get(slug);
-  if (!s) return {};
+  if (!isSlug(slug)) return {};
+  const s = solutions[slug];
   return { title: s.title, description: s.sub, alternates: { canonical: `/solutions/${slug}` } };
 }
 
-const pad = (n: number) => String(n).padStart(2, "0");
+type Group = { heading: string; items: readonly string[] };
 
-function WidgetSection({ index, heading, hint, children }: { index: string; heading: string; hint?: string; children: React.ReactNode }) {
+function GroupCard({ group, index, wide }: { group: Group; index: number; wide: boolean }) {
   return (
-    <Section className="py-20 lg:py-28" labelledBy="widget-h">
-      <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0 -z-10 opacity-60" />
-      <div className="container-x">
-        <Reveal>
-          <p className="section-index mb-6">
-            <span className="text-accent">{index}</span>
-            <span aria-hidden="true">—</span>
-            <span>{pagesUi.simulation}</span>
-          </p>
-          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <h2 id="widget-h" className="h2">
-              {heading}
-            </h2>
-            {hint ? <p className="mono text-[12px] uppercase tracking-[0.12em] text-muted">{hint}</p> : null}
-          </div>
-        </Reveal>
-        <Reveal delay={0.06}>{children}</Reveal>
+    <div className={`card p-7 md:p-9 ${wide ? "grid gap-8 lg:grid-cols-12" : "flex flex-col"}`}>
+      <div className={wide ? "lg:col-span-4" : ""}>
+        {wide ? null : (
+          <p className="num mb-3 text-[13px] font-semibold text-muted">{String(index + 1).padStart(2, "0")}</p>
+        )}
+        <h3 className="h3">{group.heading}</h3>
       </div>
-    </Section>
+      <ul className={wide ? "grid gap-x-10 gap-y-5 sm:grid-cols-2 lg:col-span-8" : "mt-7 flex flex-col gap-4"}>
+        {group.items.map((item) => (
+          <li key={item} className="flex items-start gap-3 text-[16px] leading-snug text-body">
+            <CheckBadge className="-mt-px" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Statement({ eyebrow, text }: { eyebrow: string; text: string }) {
+  return (
+    <div className="border-l-2 border-accent pl-6 md:pl-10">
+      <Eyebrow className="mb-5">{eyebrow}</Eyebrow>
+      <p className="font-display text-[clamp(24px,2.7vw,36px)] font-semibold leading-[1.25] tracking-[-0.02em] text-text">
+        {text}
+      </p>
+    </div>
   );
 }
 
 export default async function SolutionPage({ params }: Params) {
   const { slug } = await params;
-  const s = get(slug);
-  if (!s) notFound();
+  if (!isSlug(slug)) notFound();
+  const s = solutions[slug];
   const href = `/solutions/${slug}`;
-  const pos = nav.solutions.findIndex((l) => l.href === href);
-  const widgetIndex = pad(s.groups.length + 1);
+  const groups: readonly Group[] = s.groups;
+  const oversight = "oversight" in s ? s.oversight : null;
+  const standard = "standard" in s ? s.standard : null;
+  const others = (Object.keys(solutions) as SolutionSlug[]).filter((k) => k !== slug);
+  const relatedBg = oversight || standard ? "bg-surface" : "bg-bg";
 
   return (
     <>
-      <Breadcrumbs items={[{ name: s.title, path: href }]} />
+      <Breadcrumbs
+        items={[
+          { name: v2Pages.solutionsLabel, path: nav.solutions[0].href },
+          { name: s.title, path: href },
+        ]}
+      />
       <PageHero
-        scene={s.scene}
-        index={`${pad(pos + 1)} / ${pad(nav.solutions.length)}`}
-        eyebrow={nav.solutionsLabel}
-        title={s.h1}
-        sub={s.sub}
         crumbs={[
-          { label: nav.solutionsLabel, href: nav.solutions[0].href },
+          { label: v2Pages.solutionsLabel, href: nav.solutions[0].href },
           { label: s.title, href },
         ]}
-        aside={<SpecSheet title={s.title} groups={s.groups} current={href} />}
+        eyebrow={s.title}
+        title={s.h1}
+        sub={s.sub}
+        primary={{ label: nav.contact.label, href: nav.contact.href }}
+        image={{ src: PHOTOS[slug], alt: v2Pages.alt[slug] }}
       />
 
-      <Section className="pb-12 pt-20 lg:pb-16 lg:pt-28">
+      <section aria-labelledby="deliver-h" className="section-y bg-surface">
         <div className="container-x">
-          <SpecGroups groups={s.groups} />
-        </div>
-      </Section>
-
-      {slug === "algorithmic-trading" && "oversight" in s ? (
-        <>
-          <WidgetSection index={widgetIndex} heading={s.interactive.heading} hint={pagesUi.risk.sliderHint}>
-            <RiskLimitSlider />
-          </WidgetSection>
-          <Section className="pb-24 lg:pb-36">
-            <div className="container-x grid grid-cols-12 gap-x-6 gap-y-10">
-              <Reveal className="col-span-12 lg:col-span-7">
-                <blockquote className="relative pl-8 md:pl-12">
-                  <span aria-hidden="true" className="absolute left-0 top-0 h-full w-px bg-gradient-to-b from-accent via-accent/40 to-transparent" />
-                  <p className="font-display text-[clamp(24px,2.6vw,36px)] leading-[1.2] tracking-[-0.025em]">{s.oversight}</p>
-                </blockquote>
-                <div className="mt-10 pl-8 md:pl-12">
-                  <Button href={home.closing.cta.href}>{home.closing.cta.label}</Button>
-                </div>
-              </Reveal>
-              <Reveal delay={0.08} className="col-span-12 lg:col-span-5">
-                <DisclaimerBlock />
-              </Reveal>
-            </div>
-          </Section>
-        </>
-      ) : null}
-
-      {slug === "data-analytics" && "interactive" in s ? (
-        <WidgetSection index={widgetIndex} heading={s.interactive.heading}>
-          <AnalyticsDashboard />
-        </WidgetSection>
-      ) : null}
-
-      {slug === "infrastructure" && "interactive" in s ? (
-        <WidgetSection index={widgetIndex} heading={s.interactive.heading}>
-          <MonitoringPanel />
-        </WidgetSection>
-      ) : null}
-
-      {"standard" in s ? (
-        <Section className="pb-24 lg:pb-36">
-          <div className="container-x">
-            <Reveal>
-              <div className="panel relative overflow-hidden px-6 py-14 md:px-14 md:py-20">
-                <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0" />
-                <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/15 blur-[100px]" />
-                <p className="section-index relative mb-8">
-                  <span className="text-accent">{pad(s.groups.length + 1)}</span>
-                </p>
-                <p className="relative max-w-[26ch] font-display text-[clamp(28px,3.6vw,52px)] leading-[1.08] tracking-[-0.035em]">
-                  {s.standard}
-                </p>
-              </div>
-            </Reveal>
+          <SectionHeading eyebrow={s.title} title={v2Pages.solution.overviewTitle} id="deliver-h" />
+          <div className={`mt-12 grid gap-6 lg:mt-16 ${groups.length > 1 ? "lg:grid-cols-3" : ""}`}>
+            {groups.map((g, i) => (
+              <GroupCard key={g.heading} group={g} index={i} wide={groups.length === 1} />
+            ))}
           </div>
-        </Section>
+        </div>
+      </section>
+
+      {oversight ? (
+        <section className="section-y bg-bg">
+          <div className="container-x grid gap-12 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-7">
+              <Statement eyebrow={v2Pages.solution.oversightEyebrow} text={oversight} />
+            </div>
+            <div className="lg:col-span-5 lg:pt-10">
+              <DisclaimerBlock />
+            </div>
+          </div>
+        </section>
       ) : null}
 
-      <Closing />
+      {standard ? (
+        <section className="section-y bg-bg">
+          <div className="container-x">
+            <div className="max-w-[900px]">
+              <Statement eyebrow={v2Pages.solution.standardEyebrow} text={standard} />
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <section aria-labelledby="related-h" className={`section-y ${relatedBg}`}>
+        <div className="container-x">
+          <SectionHeading eyebrow={v2Pages.related.eyebrow} title={v2Pages.related.heading} id="related-h" />
+          <ul className="mt-12 grid gap-6 md:grid-cols-3 lg:mt-14">
+            {others.map((k) => {
+              const o = solutions[k];
+              return (
+                <li key={k}>
+                  <Link href={`/solutions/${k}`} className="card card-hover group flex h-full flex-col overflow-hidden">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-surface-2">
+                      <Image
+                        src={PHOTOS[k]}
+                        alt={v2Pages.alt[k]}
+                        fill
+                        sizes="(min-width: 1240px) 380px, (min-width: 768px) 31vw, 100vw"
+                        className="object-cover transition-transform duration-500 ease-[var(--ease-ui)] group-hover:scale-[1.03]"
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-6">
+                      <h3 className="h3">{o.title}</h3>
+                      <p className="mt-3 line-clamp-3 text-[15px] leading-relaxed text-muted">{o.sub}</p>
+                      <span className="mt-auto inline-flex items-center gap-2 pt-6 text-[15px] font-semibold text-accent">
+                        {v2Pages.related.link}
+                        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                      </span>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      <CtaBand />
     </>
   );
 }

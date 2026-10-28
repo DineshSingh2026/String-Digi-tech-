@@ -1,16 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { company, nav } from "@/content/copy";
 import Nav from "@/components/ui/Nav";
 import Footer from "@/components/ui/Footer";
-import SceneCanvas from "@/scenes/engine/SceneCanvas";
 import ConsentBanner from "@/components/ui/ConsentBanner";
-import SmoothScroll from "@/components/ui/SmoothScroll";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const interTight = Inter_Tight({ subsets: ["latin"], weight: ["600"], variable: "--font-inter-tight", display: "swap" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(company.url),
@@ -18,7 +15,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export const viewport: Viewport = { themeColor: "#06080B" };
+export const viewport: Viewport = { themeColor: "#FFFFFF" };
 
 const orgJsonLd = {
   "@context": "https://schema.org",
@@ -33,14 +30,12 @@ const orgJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-SG" className={`${inter.variable} ${interTight.variable} ${jetbrains.variable}`}>
+    <html lang="en-SG" className={`${inter.variable} ${interTight.variable}`}>
       <body>
         <a href="#main" className="skip-link">{nav.skip}</a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
-        <SceneCanvas />
-        <SmoothScroll />
         <Nav />
-        <main id="main" className="relative z-10">{children}</main>
+        <main id="main">{children}</main>
         <Footer />
         <ConsentBanner />
       </body>

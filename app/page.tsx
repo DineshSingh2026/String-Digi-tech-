@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import { home } from "@/content/copy";
-import Hero from "@/components/sections/Hero";
-import DataStripBand from "@/components/sections/DataStripBand";
-import Services from "@/components/sections/Services";
-import RiskFirst from "@/components/sections/RiskFirst";
-import Pipeline from "@/components/sections/Pipeline";
-import Analytics from "@/components/sections/Analytics";
-import Infrastructure from "@/components/sections/Infrastructure";
-import Software from "@/components/sections/Software";
-import Principles from "@/components/sections/Principles";
-import Why from "@/components/sections/Why";
-import Singapore from "@/components/sections/Singapore";
-import Closing from "@/components/sections/Closing";
+import Hero from "@/components/home/Hero";
+import Intro from "@/components/home/Intro";
+import Services from "@/components/home/Services";
+import RiskFirst from "@/components/home/RiskFirst";
+import Pipeline from "@/components/home/Pipeline";
+import FeatureRows from "@/components/home/FeatureRows";
+import Principles from "@/components/home/Principles";
+import Why from "@/components/home/Why";
+import Singapore from "@/components/home/Singapore";
+import ClosingCta from "@/components/home/ClosingCta";
 
 export const metadata: Metadata = {
   description: home.hero.sub,
@@ -22,17 +20,15 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <DataStripBand />
+      <Intro />
       <Services />
       <RiskFirst />
       <Pipeline />
-      <Analytics />
-      <Infrastructure />
-      <Software />
+      <FeatureRows />
       <Principles />
       <Why />
       <Singapore />
-      <Closing />
+      <ClosingCta />
     </>
   );
 }

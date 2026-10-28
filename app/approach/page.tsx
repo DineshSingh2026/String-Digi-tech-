@@ -1,109 +1,141 @@
 import type { Metadata } from "next";
-import { approach, home, misc, pagesUi } from "@/content/copy";
-import PageHero from "@/components/sections/PageHero";
-import Section from "@/components/sections/Section";
-import Principles from "@/components/sections/Principles";
-import Pipeline from "@/components/sections/Pipeline";
-import Closing from "@/components/sections/Closing";
-import Reveal from "@/components/ui/Reveal";
-import Spotlight from "@/components/ui/Spotlight";
+import { approach, home, misc, nav, v2Pages } from "@/content/copy";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import Panel from "@/components/pages/Panel";
-import Icon, { type IconKind } from "@/components/pages/Icons";
+import SectionHeading from "@/components/ui/SectionHeading";
+import PageHero from "@/components/v2/PageHero";
+import CtaBand from "@/components/v2/CtaBand";
+import { LoopIcon } from "@/components/v2/icons";
+
+const PATH = "/approach";
 
 export const metadata: Metadata = {
   title: approach.title,
   description: approach.intro,
-  alternates: { canonical: "/approach" },
+  alternates: { canonical: PATH },
 };
 
-const pad = (n: number) => String(n).padStart(2, "0");
+// Stages held at a human review gate.
 const GATES = new Set<string>(["Backtesting", "Risk controls"]);
-const CARD_ICONS: IconKind[] = ["stack", "algo", "code"];
+const pad = (n: number) => String(n).padStart(2, "0");
 
-function PipelinePanel() {
-  const p = home.pipeline;
+function ReviewBadge() {
   return (
-    <Panel
-      title={pagesUi.pipeline}
-      right={<span className="mono text-[11px] text-muted">{pad(p.stages.length)}</span>}
-      bodyClassName="px-5 py-4"
-      footer={<p className="text-[13px] leading-snug text-muted">{misc.pipelineReviewNote}</p>}
-    >
-      <ol className="relative">
-        <span aria-hidden="true" className="absolute bottom-6 left-[15px] top-4 w-px bg-gradient-to-b from-accent/70 via-white/15 to-signal/60" />
-        {p.stages.map((s, i) => {
-          const gate = GATES.has(s);
-          return (
-            <li key={s} className="relative flex items-center gap-4 py-2">
-              <span
-                className={`mono relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full border text-[10.5px] ${
-                  gate ? "border-caution/70 bg-[#1a1408] text-caution" : "border-white/15 bg-surface text-text/80"
-                }`}
-              >
-                {pad(i + 1)}
-              </span>
-              <span className="flex-1 text-[15px] text-text">{s}</span>
-              {gate ? (
-                <span className="mono rounded border border-caution/50 bg-caution/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-caution">
-                  {p.gateLabel}
-                </span>
-              ) : null}
-            </li>
-          );
-        })}
-        <li className="relative flex items-center gap-4 py-2">
-          <span className="mono relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full border border-dashed border-signal/70 bg-surface text-[14px] text-signal" aria-hidden="true">
-            ↺
-          </span>
-          <span className="mono text-[11px] uppercase tracking-[0.14em] text-signal">{p.loop}</span>
-        </li>
-      </ol>
-    </Panel>
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 text-[12px] font-semibold text-accent">
+      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent" />
+      {v2Pages.approach.reviewBadge}
+    </span>
   );
 }
 
 export default function ApproachPage() {
+  const stages = home.pipeline.stages;
   return (
     <>
-      <Breadcrumbs items={[{ name: approach.title, path: "/approach" }]} />
+      <Breadcrumbs items={[{ name: approach.title, path: PATH }]} />
       <PageHero
-        scene="Bounded"
+        crumbs={[{ label: approach.title, href: PATH }]}
+        eyebrow={v2Pages.approach.eyebrow}
         title={approach.h1}
         sub={approach.intro}
-        crumbs={[{ label: approach.title, href: "/approach" }]}
-        aside={<PipelinePanel />}
-        sceneBand
+        primary={{ label: nav.contact.label, href: nav.contact.href }}
+        image={{ src: "/images/meeting-notes.jpg", alt: v2Pages.alt.approach }}
       />
-      <Section className="py-20 lg:py-28">
+
+      {/* AI across the three practice areas */}
+      <section aria-labelledby="pillars-h" className="section-y bg-surface">
         <div className="container-x">
-          <ol className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <SectionHeading eyebrow={v2Pages.approach.pillarsEyebrow} title={v2Pages.approach.pillarsTitle} id="pillars-h" />
+          <ul className="mt-12 grid gap-6 md:grid-cols-3 lg:mt-16">
             {approach.paragraphs.map((p, i) => (
-              <li key={p.heading}>
-                <Reveal delay={i * 0.07} className="h-full">
-                  <Spotlight className="panel group relative flex h-full min-h-[340px] flex-col overflow-hidden p-7 md:p-9">
-                    <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
-                    <div className="relative flex items-start justify-between">
-                      <span className="mono text-[13px] tracking-[0.14em] text-accent">{pad(i + 1)}</span>
-                      <span className="grid h-12 w-12 place-items-center rounded-xl border border-white/[0.08] bg-white/[0.02] text-text/85">
-                        <Icon kind={CARD_ICONS[i] ?? "stack"} className="h-7 w-7" />
-                      </span>
-                    </div>
-                    <div className="relative pt-20">
-                      <h2 className="font-display text-[clamp(28px,2.6vw,38px)] leading-[1.05] tracking-[-0.035em]">{p.heading}</h2>
-                      <div aria-hidden="true" className="my-5 h-px w-10 bg-accent transition-all duration-500 group-hover:w-20" />
-                      <p className="text-[16px] leading-relaxed text-muted md:text-[17px]">{p.body}</p>
-                    </div>
-                  </Spotlight>
-                </Reveal>
+              <li key={p.heading} className="card flex flex-col p-8">
+                <span className="num text-[13px] font-semibold text-accent">{pad(i + 1)}</span>
+                <h3 className="h3 mt-6">{p.heading}</h3>
+                <p className="mt-3 text-[16px] leading-relaxed text-body">{p.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Principles */}
+      <section aria-labelledby="principles-h" className="section-y bg-bg">
+        <div className="container-x grid gap-12 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5">
+            <SectionHeading eyebrow={approach.principlesHeading} title={v2Pages.approach.principlesTitle} id="principles-h" />
+          </div>
+          <ol className="border-b border-line lg:col-span-7">
+            {home.principles.items.map((item, i) => (
+              <li key={item} className="flex items-baseline gap-6 border-t border-line py-7 md:gap-10 md:py-8">
+                <span className="num w-8 shrink-0 font-display text-[15px] font-semibold text-accent">{pad(i + 1)}</span>
+                <span className="font-display text-[clamp(20px,1.9vw,26px)] font-semibold leading-snug tracking-[-0.015em] text-text">
+                  {item}
+                </span>
               </li>
             ))}
           </ol>
         </div>
-      </Section>
-      <Principles heading={approach.principlesHeading} id="approach-principles-h" />
-      <Pipeline heading={approach.pipelineHeading} note={misc.pipelineReviewNote} id="approach-pipeline-h" />
-      <Closing />
+      </section>
+
+      {/* Strategy lifecycle */}
+      <section aria-labelledby="pipeline-h" className="section-y bg-surface">
+        <div className="container-x">
+          <SectionHeading eyebrow={v2Pages.approach.pipelineEyebrow} title={approach.pipelineHeading} id="pipeline-h" />
+
+          <div className="card mt-12 p-6 md:p-10 lg:mt-16">
+            <ol className="relative grid gap-0 lg:grid-cols-6 lg:gap-6">
+              {stages.map((stage, i) => {
+                const gate = GATES.has(stage);
+                const last = i === stages.length - 1;
+                return (
+                  <li key={stage} className="relative flex gap-5 pb-8 last:pb-0 lg:flex-col lg:gap-0 lg:pb-0">
+                    {/* connector */}
+                    {!last ? (
+                      <span
+                        aria-hidden="true"
+                        className="absolute left-[19px] top-10 bottom-0 w-px bg-line lg:left-10 lg:right-[-24px] lg:top-[19px] lg:bottom-auto lg:h-px lg:w-auto"
+                      />
+                    ) : null}
+                    <span
+                      className={`num relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full text-[14px] font-semibold ${
+                        gate ? "bg-accent text-white" : "border border-line bg-white text-text"
+                      }`}
+                    >
+                      {pad(i + 1)}
+                    </span>
+                    <div className="pt-2 lg:pt-5">
+                      <p className="font-display text-[17px] font-semibold leading-snug text-text">{stage}</p>
+                      {gate ? (
+                        <div className="mt-2.5">
+                          <ReviewBadge />
+                        </div>
+                      ) : null}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+
+            <div className="mt-10 flex flex-col gap-4 border-t border-line pt-6 text-[15px] text-muted md:flex-row md:items-center md:justify-between md:gap-8">
+              <p className="flex items-center gap-3">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface-2 text-text">
+                  <LoopIcon className="h-4 w-4" />
+                </span>
+                <span>
+                  <span className="font-semibold capitalize text-text">{home.pipeline.loop}</span>
+                  <span aria-hidden="true"> · </span>
+                  {v2Pages.approach.refineNote}
+                </span>
+              </p>
+              <p className="flex items-center gap-3">
+                <ReviewBadge />
+                <span>{misc.pipelineReviewNote}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <CtaBand />
     </>
   );
 }

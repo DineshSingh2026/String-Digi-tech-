@@ -19,17 +19,18 @@ export default async function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#06080B",
-          padding: 72,
-          color: "#E9EEF3",
+          background: "#FFFFFF",
+          padding: 80,
+          color: "#0F1720",
+          borderBottom: "12px solid #C2410C",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logoSrc} width={326} height={90} alt="" />
+        <img src={logoSrc} width={290} height={80} alt="" />
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ width: 120, height: 6, background: "#F44E04", marginBottom: 36 }} />
-          <div style={{ fontSize: 84, fontWeight: 600, letterSpacing: -3, lineHeight: 1.05 }}>{home.hero.h1}</div>
-          <div style={{ marginTop: 28, fontSize: 26, color: "#8A97A6" }}>{home.hero.eyebrow}</div>
+          <div style={{ width: 96, height: 6, background: "#C2410C", marginBottom: 36, borderRadius: 3 }} />
+          <div style={{ fontSize: 80, fontWeight: 600, letterSpacing: -3, lineHeight: 1.05 }}>{home.hero.h1}</div>
+          <div style={{ marginTop: 28, fontSize: 26, color: "#5F6B7A" }}>{home.hero.eyebrow}</div>
         </div>
       </div>
     ),
